@@ -107,7 +107,7 @@ exports.updateProduct = async (req, res, next) => {
       image = uploadImage(imageData);
       // product.image = image;
     }
-    const product = new Product(name, price, image, description, new mongodb.ObjectId(productId));
+    const product = new Product(name, price, image, description, productId);
     const updatedProduct = await product.save();
     res.status(200).json({
       message: "Product updated succesfully!",
