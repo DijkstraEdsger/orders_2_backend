@@ -10,24 +10,25 @@ exports.getProducts = async (req, res, next) => {
   console.log("limit", perPage);
 
   // build the query
-  var query = {
-    where: {
-      creator: req.loggedUser.id,
-    },
-    include: [{ model: Imagep, required: false }],
-  };
-  if (perPage) {
-    query.limit = perPage;
-  }
-  if (currentPage) {
-    query.offset = currentPage * perPage;
-  }
+  // var query = {
+  //   where: {
+  //     creator: req.loggedUser.id,
+  //   },
+  //   include: [{ model: Imagep, required: false }],
+  // };
+  // if (perPage) {
+  //   query.limit = perPage;
+  // }
+  // if (currentPage) {
+  //   query.offset = currentPage * perPage;
+  // }
 
   try {
-    const products = await Product.findAndCountAll(query);
+    const products = await Product.fetchAll();
     res
       .status(200)
-      .json({ meta: { total: products.count }, products: products.rows });
+      // .json({ meta: { total: products.count }, products: products.rows });
+      .json({ products: products });
   } catch (error) {
     console.log(error);
   }
@@ -59,6 +60,7 @@ exports.createProduct = async (req, res, next) => {
   const imgData = req.body.image;
   const price = req.body.price;
   const description = req.body.description;
+  const product = new Product(name, price, imgData, description);
 
   var image;
   if (imgData) {
@@ -66,16 +68,11 @@ exports.createProduct = async (req, res, next) => {
   }
 
   try {
-    const product = await req.loggedUser.createProduct({
-      name: name,
-      price: price,
-      image: image,
-      description: description,
-    });
+    const productResult = await product.save();
 
     res
       .status(201)
-      .json({ message: "Product created successfully!", product: product });
+      .json({ message: "Product created successfully!", product: productResult });
   } catch (error) {
     console.log(error);
   }

@@ -6,11 +6,11 @@ const isAuth = require("../middleware/is-auth");
 
 const router = express.Router();
 
-router.get("/product", isAuth, productController.getProducts);
+router.get("/product", productController.getProducts);
 
 router.get("/product/:productId", isAuth, productController.getProduct);
 
-router.post("/product", isAuth, productController.createProduct);
+router.post("/product", productController.createProduct);
 
 router.put("/product/:productId", isAuth, productController.updateProduct);
 
