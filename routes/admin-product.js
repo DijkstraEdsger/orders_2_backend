@@ -14,6 +14,6 @@ router.post("/product", productController.createProduct);
 
 router.put("/product/:productId", productController.updateProduct);
 
-router.delete("/product/:productId", isAuth, productController.deleteProduct);
+router.delete("/product/:productId", productController.deleteProduct);
 
 module.exports = router;

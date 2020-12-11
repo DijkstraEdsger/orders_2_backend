@@ -122,17 +122,17 @@ exports.deleteProduct = async (req, res, next) => {
   const productId = req.params.productId;
 
   try {
-    const products = await req.loggedUser.getProducts({
-      where: { id: productId },
-    });
-    let product;
-    if (products.length > 0) {
-      product = products[0];
-    }
-    if (!product) {
-      res.status(404).json({ message: "Product not found for user!" });
-    }
-    await product.destroy();
+    // const products = await req.loggedUser.getProducts({
+    //   where: { id: productId },
+    // });
+    // let product;
+    // if (products.length > 0) {
+    //   product = products[0];
+    // }
+    // if (!product) {
+    //   res.status(404).json({ message: "Product not found for user!" });
+    // }
+    await Product.delete(productId);
     res.status(200).json({ message: "Product deleted succesfully!" });
   } catch (error) {
     console.log(err);
