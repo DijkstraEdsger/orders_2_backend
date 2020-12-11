@@ -3,6 +3,7 @@ const User = require("../models/user");
 const Imagep = require("../models/imagep");
 const fs = require("fs");
 var uuid = require("uuid");
+var mongodb = require('mongodb');
 
 exports.getProducts = async (req, res, next) => {
   const currentPage = parseInt(req.query.currentPage) || 0;
@@ -38,14 +39,15 @@ exports.getProduct = async (req, res, next) => {
   const productId = req.params.productId;
 
   try {
-    const products = await req.loggedUser.getProducts({
-      where: { id: productId },
-      include: [{ model: Imagep, required: false }],
-    });
-    let product;
-    if (products.length > 0) {
-      product = products[0];
-    }
+    // const products = await req.loggedUser.getProducts({
+    //   where: { id: productId },
+    //   include: [{ model: Imagep, required: false }],
+    // });
+    const product = await Product.findById(productId);
+    // let product;
+    // if (products.length > 0) {
+    //   product = products[0];
+    // }
     if (!product) {
       res.status(404).json({ message: "Product not found!" });
     }
@@ -60,12 +62,12 @@ exports.createProduct = async (req, res, next) => {
   const imgData = req.body.image;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(name, price, imgData, description);
-
+  
   var image;
   if (imgData) {
     image = uploadImage(imgData);
   }
+  const product = new Product(name, price, image, description);
 
   try {
     const productResult = await product.save();
@@ -87,30 +89,31 @@ exports.updateProduct = async (req, res, next) => {
 
   try {
     const productId = req.params.productId;
-    const products = await req.loggedUser.getProducts({
-      where: { id: productId },
-    });
-    let product;
-    if (products.length > 0) {
-      product = products[0];
-    }
-    if (!product) {
-      res.status(404).json({ message: "Product not found for user!" });
-    }
-    product.title = title;
-    product.price = price;
-    product.description = description;
+    // const products = await req.loggedUser.getProducts({
+    //   where: { id: productId },
+    // });
+    // let product;
+    // if (products.length > 0) {
+    //   product = products[0];
+    // }
+    // if (!product) {
+    //   res.status(404).json({ message: "Product not found for user!" });
+    // }
+    // product.title = title;
+    // product.price = price;
+    // product.description = description;
 
     if (imageData) {
       image = uploadImage(imageData);
-      product.image = image;
+      // product.image = image;
     }
+    const product = new Product(name, price, image, description, new mongodb.ObjectId(productId));
     const updatedProduct = await product.save();
     res.status(200).json({
       message: "Product updated succesfully!",
       product: updatedProduct,
     });
-  } catch (error) {
+  } catch (err) {
     console.log(err);
   }
 };
