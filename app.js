@@ -13,7 +13,7 @@ const adminUserRoutes = require("./routes/admin-user");
 // const adminOrderRoutes = require("./routes/admin-order");
 // const cartRoutes = require("./routes/cart");
 // const orderRouter = require("./routes/order");
-// const authRouter = require("./routes/auth");
+const authRouter = require("./routes/auth");
 // const adminImageRoutes = require("./routes/admin-image");
 // const heroRoutes = require("./routes/hero");
 
@@ -44,7 +44,7 @@ app.use("/admin", adminUserRoutes);
 // app.use("/admin", adminOrderRoutes);
 // app.use("/shop", cartRoutes);
 // app.use("/shop", orderRouter);
-// app.use("/auth", authRouter);
+app.use("/auth", authRouter);
 // app.use("/admin", adminImageRoutes);
 // app.use("/admin", heroRoutes);
 

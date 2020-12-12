@@ -17,8 +17,9 @@ module.exports = async (req, res, next) => {
   if (!decodedToken) {
     res.status(401).json({ message: "Not authenticated!" });
   }
+  console.log('decoded token userId:', decodedToken.userId);
 
-  req.loggedUser = await User.findByPk(decodedToken.userId);
+  req.loggedUser = await User.findById(decodedToken.userId);
 
   next();
 };

@@ -9,12 +9,9 @@ exports.signUp = async (req, res, next) => {
 
   try {
     const hashedPw = await bcryptjs.hash(password, 12);
-    const user = await User.create({
-      name: name,
-      email: email,
-      password: hashedPw,
-    });
-    await user.createCart();
+    const user = new User(name, email, hashedPw);
+    const userCreated = await user.save();
+    // await user.createCart();
     res.status(201).json({ message: "User created successfully!", user: user });
   } catch (error) {
     console.log(error);
@@ -27,11 +24,8 @@ exports.login = async (req, res, next) => {
   let loadedUser;
 
   try {
-    const user = await User.findOne({ where: { email: email } });
+    const user = await User.findByEmail(email);
 
-    if (!user) {
-      res.status(401).json({ message: "User with that email doesn't exists!" });
-    }
     const isEqual = await bcryptjs.compare(password, user.password);
 
     if (!isEqual) {
@@ -40,7 +34,7 @@ exports.login = async (req, res, next) => {
     const token = jwt.sign(
       {
         email: user.email,
-        userId: user.id,
+        userId: user._id,
       },
       "somesupersecretsecret",
       { expiresIn: "1h" }

@@ -62,12 +62,14 @@ exports.createProduct = async (req, res, next) => {
   const imgData = req.body.image;
   const price = req.body.price;
   const description = req.body.description;
+  const userId = req.loggedUser._id;
+  console.log('authhhhhhhhhh', req.loggedUser);
   
   var image;
   if (imgData) {
     image = uploadImage(imgData);
   }
-  const product = new Product(name, price, image, description);
+  const product = new Product(name, price, image, description, null, userId);
 
   try {
     const productResult = await product.save();

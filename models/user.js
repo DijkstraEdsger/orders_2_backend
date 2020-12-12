@@ -2,9 +2,10 @@ const mongodb = require('mongodb');
 let getDb = require('../util/database').getDb;
 
 class User {
-    constructor(name, email, id) {
+    constructor(name, email, password, id) {
         this.name = name;
         this.email = email;
+        this.password = password;
         this._id = id ? new mongodb.ObjectId(id) : null;
     }
 
@@ -42,6 +43,7 @@ class User {
             .find({ _id: new mongodb.ObjectId(userId) })
             .next()
             .then((user) => {
+                console.log('userrrrrrrrr', user);
                 return user;
             })
             .catch((err) => {
@@ -55,6 +57,20 @@ class User {
             .deleteOne({ _id: new mongodb.ObjectId(userId) })
             .then(() => {
                 console.log('user deleted');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    static findByEmail(email) {
+        let db = getDb();
+        return db.collection('users')
+            .find({ email: email })
+            .next()
+            .then((user) => {
+                console.log('user by email', user);
+                return user;
             })
             .catch((err) => {
                 console.log(err);
