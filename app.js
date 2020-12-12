@@ -8,7 +8,7 @@ const mongoConnect = require('./util/database').mongoConnect;
 
 
 const adminProductRoutes = require("./routes/admin-product");
-// const adminUserRoutes = require("./routes/admin-user");
+const adminUserRoutes = require("./routes/admin-user");
 // const adminCartRoutes = require("./routes/admin-cart");
 // const adminOrderRoutes = require("./routes/admin-order");
 // const cartRoutes = require("./routes/cart");
@@ -39,7 +39,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 // app.use(multer({ dest: "public/images" }).single("file"));
 
 app.use("/admin", adminProductRoutes);
-// app.use("/admin", adminUserRoutes);
+app.use("/admin", adminUserRoutes);
 // app.use("/admin", adminCartRoutes);
 // app.use("/admin", adminOrderRoutes);
 // app.use("/shop", cartRoutes);

@@ -1,16 +1,65 @@
-// const Sequelize = require("sequelize");
+const mongodb = require('mongodb');
+let getDb = require('../util/database').getDb;
 
-// const sequelize = require("../util/database");
+class User {
+    constructor(name, email, id) {
+        this.name = name;
+        this.email = email;
+        this._id = id ? new mongodb.ObjectId(id) : null;
+    }
 
-// const User = sequelize.define("user", {
-//   id: {
-//     type: Sequelize.UUID,
-//     defaultValue: Sequelize.UUIDV1,
-//     primaryKey: true,
-//   },
-//   name: Sequelize.STRING,
-//   email: Sequelize.STRING,
-//   password: Sequelize.STRING,
-// });
+    save() {
+        let db = getDb();
+        let dbOp;
+        if (this._id) {
+            dbOp = db.collection('users').updateOne({ _id: this._id }, { $set: this });
+        } else {
+            dbOp = db.collection('users').insertOne(this);
+        }
+        return dbOp
+            .then((result) => {
+                console.log(result);
+                return result;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
 
-// module.exports = User;
+    static fetchAll() {
+        let db = getDb();
+        return db.collection('users')
+            .find()
+            .toArray()
+            .then((users) => {
+                return users;
+            })
+    }
+
+    static findById(userId) {
+        let db = getDb();
+        return db.collection('users')
+            .find({ _id: new mongodb.ObjectId(userId) })
+            .next()
+            .then((user) => {
+                return user;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    static delete(userId) {
+        let db = getDb();
+        return db.collection('users')
+            .deleteOne({ _id: new mongodb.ObjectId(userId) })
+            .then(() => {
+                console.log('user deleted');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+}
+
+module.exports = User;

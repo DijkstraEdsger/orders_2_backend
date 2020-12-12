@@ -1,7 +1,7 @@
 const User = require("../models/user");
 
 exports.getUsers = (req, res, next) => {
-  User.findAll()
+  User.fetchAll()
     .then((users) => {
       res.status(200).json({ users: users });
     })
@@ -12,7 +12,7 @@ exports.getUsers = (req, res, next) => {
 
 exports.getUser = (req, res, next) => {
   const userId = req.params.userId;
-  User.findByPk(userId)
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         res.status(404).json({ message: "User not found!" });
@@ -27,11 +27,9 @@ exports.getUser = (req, res, next) => {
 exports.createUser = (req, res, next) => {
   const name = req.body.name;
   const email = req.body.email;
+  const user = new User(name, email);
 
-  User.create({
-    name: name,
-    email: email,
-  })
+  user.save()
     .then((user) => {
       res
         .status(201)
@@ -46,20 +44,16 @@ exports.updateUser = (req, res, next) => {
   const userId = req.params.userId;
   const name = req.body.name;
   const email = req.body.email;
+  const user = new User(name, email, userId);
 
-  User.findByPk(userId)
-    .then((user) => {
-      if (!user) {
+  user.save()
+    .then((userUpdated) => {
+      if (!userUpdated) {
         res.status(404).json({ message: "User not found!" });
       }
-      user.name = name;
-      user.email = email;
-      return user.save();
-    })
-    .then((result) => {
-      res
-        .status(200)
-        .json({ message: "User updated succesfully", user: result });
+
+      res.status(200)
+        .json({ message: "User updated succesfully", user: userUpdated });
     })
     .catch((err) => {
       console.log(err);
@@ -69,14 +63,8 @@ exports.updateUser = (req, res, next) => {
 exports.deleteUser = (req, res, next) => {
   const userId = req.params.userId;
 
-  User.findByPk(userId)
+  User.delete(userId)
     .then((user) => {
-      if (!user) {
-        res.status(404).json({ message: "User not found!" });
-      }
-      return user.destroy();
-    })
-    .then((result) => {
       res.status(200).json({ message: "User deleted succesfully!" });
     })
     .catch((err) => {
