@@ -1,53 +1,66 @@
 const Product = require("../models/product");
 const User = require("../models/user");
 
-exports.addProductToCart = (req, res, next) => {
+exports.addProductToCart = async (req, res, next) => {
   const productId = req.body.productId;
-  const userId = req.body.userId;
-  const quantity = req.body.quantity;
-  let fetchedCart;
+  // temp
+  req.loggedUser.name = 'John';
+  // temp
+  try {
+    let productFetched = await Product.findById(productId);
+    let userUpdated = await req.loggedUser.save();
+    console.log('ooooooooooo', userUpdated);
+    // await req.loggedUser.addToCart(productFetched);
+    console.log('Product added to the cart succesfully!');
+  } catch (error) {
+    console.log(error);
+  }
 
-  // find user, find cart of user, add product to cart
+  // const userId = req.body.userId;
+  // const quantity = req.body.quantity;
+  // let fetchedCart;
 
-  User.findByPk(userId)
-    .then((user) => {
-      user
-        .getCart()
-        .then((cart) => {
-          fetchedCart = cart;
-          cart
-            .getProducts({ where: { id: productId } })
-            .then((products) => {
-              let product;
-              if (products.length > 0) {
-                product = products[0];
-              }
-              if (product) {
-                return product;
-              }
-              return Product.findByPk(productId);
-            })
-            .then((product) => {
-              return fetchedCart.addProduct(product, {
-                through: { quantity: quantity },
-              });
-            })
-            .then((result) => {
-              res
-                .status(201)
-                .json({ message: "Product added to the cart succesfully!" });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  // // find user, find cart of user, add product to cart
+
+  // User.findByPk(userId)
+  //   .then((user) => {
+  //     user
+  //       .getCart()
+  //       .then((cart) => {
+  //         fetchedCart = cart;
+  //         cart
+  //           .getProducts({ where: { id: productId } })
+  //           .then((products) => {
+  //             let product;
+  //             if (products.length > 0) {
+  //               product = products[0];
+  //             }
+  //             if (product) {
+  //               return product;
+  //             }
+  //             return Product.findByPk(productId);
+  //           })
+  //           .then((product) => {
+  //             return fetchedCart.addProduct(product, {
+  //               through: { quantity: quantity },
+  //             });
+  //           })
+  //           .then((result) => {
+  //             res
+  //               .status(201)
+  //               .json({ message: "Product added to the cart succesfully!" });
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 };
 
 exports.deleteProductFromCart = async (req, res, next) => {

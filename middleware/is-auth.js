@@ -19,7 +19,8 @@ module.exports = async (req, res, next) => {
   }
   console.log('decoded token userId:', decodedToken.userId);
 
-  req.loggedUser = await User.findById(decodedToken.userId);
+  let userFetched = await User.findById(decodedToken.userId);
+  req.loggedUser = new User(userFetched.name, userFetched.email, userFetched.password, userFetched._id, userFetched.cart);
 
   next();
 };
