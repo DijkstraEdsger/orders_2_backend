@@ -4,27 +4,34 @@ const User = require("../models/user");
 const { updateUser } = require("./admin-user");
 
 exports.getCart = (req, res, next) => {
-  User.findByPk(req.userId)
-    .then((user) => {
-      user
-        .getCart()
-        .then((cart) => {
-          return cart
-            .getProducts()
-            .then((products) => {
-              res.status(200).json({ cart: products });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+  req.loggedUser.getCart()
+    .then((products) => {
+      res.status(200).json({ cart: products });
     })
     .catch((err) => {
       console.log(err);
     });
+  // User.findByPk(req.userId)
+  //   .then((user) => {
+  //     user
+  //       .getCart()
+  //       .then((cart) => {
+  //         return cart
+  //           .getProducts()
+  //           .then((products) => {
+  //             res.status(200).json({ cart: products });
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 };
 
 exports.addProductToCart = async (req, res, next) => {

@@ -48,6 +48,24 @@ class User {
             .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: { cart: updatedCart } });
     }
 
+    getCart() {
+        let db = getDb();
+        let productIds = this.cart.items.map((item) => {
+            return item.productId;
+        })
+        return db.collection('products')
+            .find({ _id: { $in: productIds } })
+            .toArray()
+            .then((products) => {
+                return products.map((p) => {
+                    return {
+                        ...p, quantity: this.cart.items.find(item =>
+                            item.productId.toString() === p._id.toString()).quantity
+                    };
+                })
+            })
+    }
+
     static fetchAll() {
         let db = getDb();
         return db.collection('users')
