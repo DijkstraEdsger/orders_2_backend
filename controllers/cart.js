@@ -99,30 +99,11 @@ exports.addProductToCart = async (req, res, next) => {
   //   });
 };
 
-exports.deleteProductFromCart = (req, res, next) => {
+exports.deleteProductFromCart = async (req, res, next) => {
   const productId = req.body.productId;
 
-  User.findByPk(req.userId)
-    .then((user) => {
-      req.user
-        .getCart()
-        .then((cart) => {
-          return cart.getProducts({ where: { id: productId } });
-        })
-        .then((products) => {
-          const product = products[0];
-          return product.cartItem.destroy();
-        })
-        .then((result) => {
-          res
-            .status(200)
-            .json({ message: "Product deleted from cart siccesfully!" });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  await req.loggedUser.deleteProductFromCart(productId);
+  res
+    .status(200)
+    .json({ message: "Product deleted from cart succesfully!" });
 };
