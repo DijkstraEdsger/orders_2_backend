@@ -75,6 +75,25 @@ class User {
             .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: { cart: { items: updatedCartItems } } });
     }
 
+    async addOrder() {
+        let db = getDb();
+        let products = await this.getCart();
+        const order = {
+            items: products,
+            user: {
+                _id: new mongodb.ObjectId(this._id),
+                name: this.name
+            }
+        };
+        return db.collection('orders')
+            .insertOne(order)
+            .then((result) => {
+                this.cart = { items: [] };
+                return db.collection('users')
+                    .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: { cart: { items: [] } } });
+            })
+    }
+
     static fetchAll() {
         let db = getDb();
         return db.collection('users')
