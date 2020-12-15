@@ -1,9 +1,10 @@
 const express = require("express");
 // const compression = require('compression');
 const path = require("path");
+const mongoose = require('mongoose');
 
 const bodyParser = require("body-parser");
-const mongoConnect = require('./util/database').mongoConnect;
+// const mongoConnect = require('./util/database').mongoConnect;
 
 
 
@@ -48,6 +49,9 @@ app.use("/auth", authRouter);
 // app.use("/admin", adminImageRoutes);
 // app.use("/admin", heroRoutes);
 
-mongoConnect(() => {
+mongoose.connect('mongodb://127.0.0.1/ordershop', {useNewUrlParser: true}).then((result) => {
   app.listen(8080);
 })
+  .catch((err) => {
+    console.log(err);
+  });

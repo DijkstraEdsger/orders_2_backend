@@ -25,7 +25,7 @@ exports.getProducts = async (req, res, next) => {
   // }
 
   try {
-    const products = await Product.fetchAll();
+    const products = await Product.find();
     res
       .status(200)
       // .json({ meta: { total: products.count }, products: products.rows });
@@ -62,14 +62,18 @@ exports.createProduct = async (req, res, next) => {
   const imgData = req.body.image;
   const price = req.body.price;
   const description = req.body.description;
-  const userId = req.loggedUser._id;
-  console.log('authhhhhhhhhh', req.loggedUser);
-  
+  // const userId = req.loggedUser._id;
+
   var image;
   if (imgData) {
     image = uploadImage(imgData);
   }
-  const product = new Product(name, price, image, description, null, userId);
+  const product = new Product({
+    name: name,
+    price: price,
+    image: image,
+    description: description
+  });
 
   try {
     const productResult = await product.save();
