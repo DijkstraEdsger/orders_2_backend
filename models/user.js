@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser');
 const mongodb = require('mongodb');
 let getDb = require('../util/database').getDb;
 
@@ -92,6 +93,13 @@ class User {
                 return db.collection('users')
                     .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: { cart: { items: [] } } });
             })
+    }
+
+    getOrders() {
+        let db = getDb();
+        return db.collection('orders')
+            .find({ 'user._id': new mongodb.ObjectId(this._id) })
+            .toArray();
     }
 
     static fetchAll() {

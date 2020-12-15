@@ -41,13 +41,6 @@ exports.createOrder = async (req, res, next) => {
 };
 
 exports.getOrders = async (req, res, next) => {
-  const user = await User.findByPk(req.userId);
-  user
-    .getOrders({ include: ["products"] })
-    .then((orders) => {
-      res.status(200).json({ orders: orders });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  let orders = await req.loggedUser.getOrders();
+  res.status(200).json({ orders: orders });
 };
