@@ -109,11 +109,16 @@ exports.updateProduct = async (req, res, next) => {
     // product.price = price;
     // product.description = description;
 
+    let product = await Product.findById(productId);
     if (imageData) {
       image = uploadImage(imageData);
       // product.image = image;
     }
-    const product = new Product(name, price, image, description, productId);
+    // const product = new Product(name, price, image, description, productId);
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.image = image;
     const updatedProduct = await product.save();
     res.status(200).json({
       message: "Product updated succesfully!",
@@ -138,7 +143,7 @@ exports.deleteProduct = async (req, res, next) => {
     // if (!product) {
     //   res.status(404).json({ message: "Product not found for user!" });
     // }
-    await Product.delete(productId);
+    await Product.findByIdAndRemove(productId);
     res.status(200).json({ message: "Product deleted succesfully!" });
   } catch (error) {
     console.log(err);
